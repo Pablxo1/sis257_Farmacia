@@ -1,0 +1,75 @@
+1. Producto
+id
+
+nombre
+
+descripción
+
+precio
+
+categoría_id (relación con Categoría)
+
+2. Cliente
+id
+
+nombre
+
+Celular
+
+Direccion
+
+3. Pedido (orden)
+id
+
+cliente_id (opcional, si es anónimo)
+
+empleado_id
+
+fecha
+
+total
+
+estado (Ej: en preparación, listo, entregado)
+
+
+4. DetallePedido
+id
+
+pedido_id
+
+producto_id
+
+cantidad
+
+precio_unitario
+
+5. Empleado
+id
+
+nombre
+
+rol (Ej: barista, cajero, administrador)
+
+Celular
+
+contraseña (para login)
+
+6. Proveedores 
+id
+
+nombre
+
+contacto
+
+productos_suministrados
+
+7.Venta
+id
+transaccion
+fecha
+
+8.VentaDetalle
+id
+cantidad
+precio
+total

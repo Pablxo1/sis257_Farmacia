@@ -1,2 +1,2 @@
 # sis257_Farmacia
-Creacion Repositorio 
+Aplicación web enfocada en la gestión de una farmacia, desarrollada para optimizar tanto la atención al cliente como las tareas administrativas. Este sistema permite tener un control preciso sobre los medicamentos disponibles, organiza la información de proveedores y ayuda a mantener un historial ordenado de ventas. Además, está pensada para cumplir con los requerimientos básicos de operación de una farmacia, ofreciendo una interfaz accesible y funcional. Ideal para farmacias pequeñas y medianas que buscan automatizar procesos, mejorar la organización y garantizar un servicio más eficiente y confiable.

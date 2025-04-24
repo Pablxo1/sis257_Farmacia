@@ -5,6 +5,11 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProductosModule } from './productos/productos.module';
 import { InventariosModule } from './inventarios/inventarios.module';
+import { DistribuidorasModule } from './distribuidoras/distribuidoras.module';
+import { VentasModule } from './ventas/ventas.module';
+import { ItemVentasModule } from './item-ventas/item-ventas.module';
+import { ClientesModule } from './clientes/clientes.module';
+import { UsuariosModule } from './usuarios/usuarios.module';
 
 @Module({
   imports: [
@@ -22,6 +27,11 @@ import { InventariosModule } from './inventarios/inventarios.module';
     }),
     ProductosModule,
     InventariosModule,
+    DistribuidorasModule,
+    VentasModule,
+    ItemVentasModule,
+    ClientesModule,
+    UsuariosModule,
   ],
   controllers: [AppController],
   providers: [AppService],

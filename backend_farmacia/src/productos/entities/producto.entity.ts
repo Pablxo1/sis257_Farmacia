@@ -1,4 +1,4 @@
-import { Entity } from "typeorm";
+import { Entity } from 'typeorm';
 
 @Entity('productos')
 export class Producto {}

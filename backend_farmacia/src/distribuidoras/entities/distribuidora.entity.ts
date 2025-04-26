@@ -1,8 +1,10 @@
+import { Inventario } from 'src/inventarios/entities/inventario.entity';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -32,4 +34,7 @@ export class Distribuidora {
 
   @DeleteDateColumn({ name: 'fecha_eliminacion' })
   fechaEliminacion: Date;
+
+  @OneToMany(() => Inventario, inventarios => inventarios.distribuidora)
+  inventarios: Inventario[];
 }

@@ -1,8 +1,13 @@
+import { Cliente } from 'src/clientes/entities/cliente.entity';
+import { ItemVenta } from 'src/item-ventas/entities/item-venta.entity';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -11,6 +16,9 @@ import {
 export class Venta {
   @PrimaryGeneratedColumn('identity')
   id: number;
+
+  @Column('integer', { name: 'id_Cliente' })
+  idCliente: number;
 
   @Column('timestamp', { default: () => 'CURRENT_TIMESTAMP' })
   fecha: Date;
@@ -26,4 +34,11 @@ export class Venta {
 
   @DeleteDateColumn({ name: 'fecha_eliminacion' })
   fechaEliminacion: Date;
+
+  @OneToMany(() => ItemVenta, itemVentas => itemVentas.venta)
+  itemVentas: ItemVenta[];
+
+  @ManyToOne(() => Cliente, cliente => cliente.ventas)
+  @JoinColumn({ name: 'id_Cliente', referencedColumnName: 'id' })
+  cliente: Cliente;
 }

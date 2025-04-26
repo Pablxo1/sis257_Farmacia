@@ -1,8 +1,12 @@
+import { Distribuidora } from 'src/distribuidoras/entities/distribuidora.entity';
+import { Producto } from 'src/productos/entities/producto.entity';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -11,6 +15,12 @@ import {
 export class Inventario {
   @PrimaryGeneratedColumn('identity')
   id: number;
+
+  @Column('integer', { name: 'id_producto' })
+  idProducto: number;
+
+  @Column('integer', { name: 'id_distribuidora' })
+  idDistribuidora: number;
 
   @Column('int')
   cantidad: number;
@@ -29,4 +39,12 @@ export class Inventario {
 
   @DeleteDateColumn({ name: 'fecha_eliminacion' })
   fechaEliminacion: Date;
+
+  @ManyToOne(() => Producto, producto => producto.inventarios)
+  @JoinColumn({ name: 'id_producto', referencedColumnName: 'id' })
+  producto: Producto;
+
+  @ManyToOne(() => Distribuidora, distribuidora => distribuidora.inventarios)
+  @JoinColumn({ name: 'id_distribuidora', referencedColumnName: 'id' })
+  distribuidora: Distribuidora;
 }

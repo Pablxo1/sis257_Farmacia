@@ -1,26 +1,52 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateDistribuidoraDto } from './dto/create-distribuidora.dto';
 import { UpdateDistribuidoraDto } from './dto/update-distribuidora.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Distribuidora } from './entities/distribuidora.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class DistribuidorasService {
-  create(createDistribuidoraDto: CreateDistribuidoraDto) {
-    return 'This action adds a new distribuidora';
+  constructor(
+    @InjectRepository(Distribuidora) private distribuidorasRepository: Repository<Distribuidora>,
+  ) {}
+
+  async create(createDistribuidoraDto: CreateDistribuidoraDto): Promise<Distribuidora> {
+    const existe = await this.distribuidorasRepository.findOneBy({
+      nombre: createDistribuidoraDto.nombre.trim(),
+      telefono: createDistribuidoraDto.telefono.trim(),
+      direccion: createDistribuidoraDto.direccion.trim(),
+      email: createDistribuidoraDto.email.trim(),
+    });
+
+    if (existe) throw new ConflictException('La distribuidora ya existe');
+
+    const distribuidora = new Distribuidora();
+    distribuidora.nombre = createDistribuidoraDto.nombre.trim();
+    distribuidora.telefono = createDistribuidoraDto.telefono.trim();
+    distribuidora.direccion = createDistribuidoraDto.direccion.trim();
+    distribuidora.email = createDistribuidoraDto.email.trim();
+    return this.distribuidorasRepository.save(distribuidora);
   }
 
-  findAll() {
-    return `This action returns all distribuidoras`;
+  async findAll() {
+    return this.distribuidorasRepository.find({ order: { nombre: 'ASC' } });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} distribuidora`;
+  async findOne(id: number): Promise<Distribuidora> {
+    const distribuidora = await this.distribuidorasRepository.findOneBy({ id });
+    if (!distribuidora) throw new NotFoundException('La distribuidora no existe');
+    return distribuidora;
   }
 
-  update(id: number, updateDistribuidoraDto: UpdateDistribuidoraDto) {
-    return `This action updates a #${id} distribuidora`;
+  async update(id: number, updateDistribuidoraDto: UpdateDistribuidoraDto) {
+    const distribuidora = await this.findOne(id);
+    const distribuidoraUpdate = Object.assign(distribuidora, updateDistribuidoraDto);
+    return this.distribuidorasRepository.save(distribuidoraUpdate);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} distribuidora`;
+  async remove(id: number) {
+    const distribuidora = await this.findOne(id);
+    if (distribuidora) return this.distribuidorasRepository.softRemove(distribuidora);
   }
 }

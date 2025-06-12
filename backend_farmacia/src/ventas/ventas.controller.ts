@@ -2,14 +2,15 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { VentasService } from './ventas.service';
 import { CreateVentaDto } from './dto/create-venta.dto';
 import { UpdateVentaDto } from './dto/update-venta.dto';
+import { CreateItemVentaDto } from 'src/item-ventas/dto/create-item-venta.dto';
 
 @Controller('ventas')
 export class VentasController {
   constructor(private readonly ventasService: VentasService) {}
 
   @Post()
-  create(@Body() createVentaDto: CreateVentaDto) {
-    return this.ventasService.create(createVentaDto);
+  create(@Body() body: { venta: CreateVentaDto; items: CreateItemVentaDto[] }) {
+    return this.ventasService.create(body.venta, body.items);
   }
 
   @Get()

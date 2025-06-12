@@ -12,23 +12,8 @@ export class ItemVentasController {
     return this.itemVentasService.create(createItemVentaDto);
   }
 
-  @Get()
-  findAll() {
-    return this.itemVentasService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.itemVentasService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateItemVentaDto: UpdateItemVentaDto) {
-    return this.itemVentasService.update(+id, updateItemVentaDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.itemVentasService.remove(+id);
+  @Get('venta/:idVenta')
+  async findByVenta(@Param('idVenta') idVenta: number) {
+    return this.itemVentasService.findByVenta(idVenta);
   }
 }

@@ -3,25 +3,45 @@ import { CreateVentaDto } from './dto/create-venta.dto';
 import { UpdateVentaDto } from './dto/update-venta.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Venta } from './entities/venta.entity';
-import { Repository } from 'typeorm';
-
+import { DataSource, Repository } from 'typeorm';
+import { ItemVenta } from 'src/item-ventas/entities/item-venta.entity';
+import { CreateItemVentaDto } from 'src/item-ventas/dto/create-item-venta.dto';
+import { InventariosService } from 'src/inventarios/inventarios.service';
 @Injectable()
 export class VentasService {
-  constructor(@InjectRepository(Venta) private ventasRepository: Repository<Venta>) {}
+  constructor(
+    @InjectRepository(Venta) private ventasRepository: Repository<Venta>,
+    @InjectRepository(ItemVenta) private itemVentasRepository: Repository<ItemVenta>,
+    private dataSource: DataSource,
+    private inventariosService: InventariosService,
+  ) {}
 
-  async create(createVentaDto: CreateVentaDto): Promise<Venta> {
-    const existe = await this.ventasRepository.findOneBy({
-      idCliente: createVentaDto.idCliente,
-      fecha: createVentaDto.fecha,
+  async create(createVentaDto: CreateVentaDto, itemsDto: CreateItemVentaDto[]): Promise<Venta> {
+    return await this.dataSource.transaction(async manager => {
+      // 1. Crear la venta
+      const venta = manager.create(Venta, {
+        idCliente: createVentaDto.idCliente,
+        fecha: createVentaDto.fecha,
+        total: createVentaDto.total,
+        efectivo: createVentaDto.efectivo,
+        cambio: createVentaDto.cambio,
+      });
+      const ventaGuardada = await manager.save(Venta, venta);
+
+      for (const itemDto of itemsDto) {
+        await this.inventariosService.descontarStock(itemDto.idProducto, itemDto.cantidad, manager);
+
+        const itemVenta = manager.create(ItemVenta, {
+          idVenta: ventaGuardada.id,
+          idProducto: itemDto.idProducto,
+          cantidad: itemDto.cantidad,
+          precioUnitario: itemDto.precioUnitario,
+        });
+        await manager.save(ItemVenta, itemVenta);
+      }
+
+      return ventaGuardada;
     });
-
-    if (existe) throw new ConflictException('La venta ya existe para este cliente y fecha');
-
-    const venta = new Venta();
-    venta.idCliente = createVentaDto.idCliente;
-    venta.fecha = createVentaDto.fecha;
-    venta.total = createVentaDto.total;
-    return this.ventasRepository.save(venta);
   }
 
   async findAll(): Promise<Venta[]> {
@@ -31,6 +51,8 @@ export class VentasService {
         id: true,
         fecha: true,
         total: true,
+        efectivo: true,
+        cambio: true,
         cliente: {
           id: true,
           nombre: true,
@@ -60,5 +82,10 @@ export class VentasService {
   async remove(id: number) {
     const venta = await this.findOne(id);
     if (venta) return this.ventasRepository.softRemove(venta);
+  }
+  async actualizarTotalVenta(idVenta: number) {
+    const items = await this.itemVentasRepository.find({ where: { idVenta } });
+    const total = items.reduce((sum, item) => sum + item.cantidad * Number(item.precioUnitario), 0);
+    await this.ventasRepository.update(idVenta, { total });
   }
 }

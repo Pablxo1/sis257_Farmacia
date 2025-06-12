@@ -26,6 +26,12 @@ export class Venta {
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   total: number;
 
+  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
+  efectivo: number;
+
+  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
+  cambio: number;
+
   @CreateDateColumn({ name: 'fecha_creacion' })
   fechaCreacion: Date;
 

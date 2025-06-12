@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsDateString, IsDefined, IsInt, IsNumber } from 'class-validator';
+import { IsDateString, IsDefined, IsInt, IsNumber, IsOptional } from 'class-validator';
 import { Cliente } from 'src/clientes/entities/cliente.entity';
 
 export class CreateVentaDto {
@@ -19,4 +19,12 @@ export class CreateVentaDto {
   @IsDefined({ message: 'El campo total debe estar definido' })
   @IsNumber({ maxDecimalPlaces: 2 }, { message: 'El total debe tener máximo 2 decimales' })
   readonly total: number;
+
+  @IsNumber({ maxDecimalPlaces: 2 }, { message: 'El efectivo debe tener máximo 2 decimales' })
+  @IsOptional()
+  readonly efectivo?: number;
+
+  @IsNumber({ maxDecimalPlaces: 2 }, { message: 'El cambio debe tener máximo 2 decimales' })
+  @IsOptional()
+  readonly cambio?: number;
 }

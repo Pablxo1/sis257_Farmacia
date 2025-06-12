@@ -1,9 +1,14 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateInventarioDto } from './dto/create-inventario.dto';
 import { UpdateInventarioDto } from './dto/update-inventario.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Inventario } from './entities/inventario.entity';
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 
 @Injectable()
 export class InventariosService {
@@ -43,7 +48,14 @@ export class InventariosService {
         fechaIngresoAlmacen: true,
         fechaVencimiento: true,
         distribuidora: { id: true, nombre: true },
-        producto: { id: true, nombre: true, presentacion: true, concentracion: true },
+        producto: {
+          id: true,
+          nombre: true,
+          presentacion: true,
+          concentracion: true,
+          precioVenta: true,
+          precioCompra: true,
+        },
       },
       order: { fechaIngresoAlmacen: 'DESC' },
     });
@@ -68,5 +80,28 @@ export class InventariosService {
   async remove(id: number) {
     const inventario = await this.findOne(id);
     return this.inventariosRepository.softRemove(inventario);
+  }
+  async descontarStock(idProducto: number, cantidad: number, manager?: EntityManager) {
+    const repo = manager ? manager.getRepository(Inventario) : this.inventariosRepository;
+    const inventarios = await repo.find({
+      where: { idProducto },
+      order: { fechaIngresoAlmacen: 'ASC' },
+    });
+
+    let cantidadRestante = cantidad;
+    for (const inv of inventarios) {
+      if (inv.cantidad >= cantidadRestante) {
+        inv.cantidad -= cantidadRestante;
+        await repo.save(inv);
+        return;
+      } else {
+        cantidadRestante -= inv.cantidad;
+        inv.cantidad = 0;
+        await repo.save(inv);
+      }
+    }
+    if (cantidadRestante > 0) {
+      throw new BadRequestException('Stock insuficiente para este producto');
+    }
   }
 }

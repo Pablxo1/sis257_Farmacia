@@ -113,6 +113,11 @@ async function handleSave() {
       return
     }
 
+    if (efectivo < total.value) {
+      alert('El efectivo no puede ser menor que el total de la venta.')
+      return
+    }
+
     for (const item of items.value) {
       if (!item.idProducto || item.idProducto === 0) {
         alert('Selecciona un producto para cada item.')

@@ -28,9 +28,9 @@ function handleGuardar() {
 </script>
 
 <template>
-  <div class="m-7 flex flex-column overflow-hidden">
+  <div class="m-7 fade-in">
     <h2>Inventarios</h2>
-    <Button label="Crear Nuevo" icon="pi pi-plus" @click="handleCreate" class="col-3" />
+    <Button label="Crear Nuevo" icon="pi pi-plus" @click="handleCreate" />
     <InventarioList ref="inventarioListRef" @edit="handleEdit" />
     <InventarioSave
       :mostrar="mostrarDialog"

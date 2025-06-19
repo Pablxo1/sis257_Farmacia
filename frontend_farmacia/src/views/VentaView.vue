@@ -22,7 +22,7 @@ function handleGuardar() {
 </script>
 
 <template>
-  <div class="m-7">
+  <div class="m-7 fade-in">
     <h2>Ventas</h2>
     <div class="mb-3 flex justify-end">
       <Button label="Registrar Venta" icon="pi pi-plus" @click="handleCreate" />

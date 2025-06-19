@@ -1,4 +1,4 @@
-import './assets/main.css'
+
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
@@ -9,7 +9,7 @@ import 'primeflex/primeflex.min.css'
 
 import App from './App.vue'
 import router from './router'
-
+import './assets/main.css'
 const app = createApp(App)
 
 app.use(createPinia())
@@ -19,7 +19,7 @@ app.use(PrimeVue, {
     preset: Aura,
     options: {
       prefix: 'p',
-      darkModeSelector: 'system',
+      darkModeSelector: 'false',
       cssLayer: false,
     },
   },

@@ -12,7 +12,8 @@ async function bootstrap() {
   app.enableCors();
 
   const config = new DocumentBuilder()
-    .setTitle('API Rest Rest Sistema Farmacia')
+    .addBearerAuth({ type: 'http', scheme: 'bearer', bearerFormat: 'JWT', in: 'header' })
+    .setTitle('API Rest Sistema Farmacia')
     .setDescription('API Rest Sistema Farmacia')
     .setVersion('1.0')
     .build();

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Venta } from '@/models/venta'
 import http from '@/plugins/axios'
-import { Dialog, InputGroup, InputGroupAddon, InputText } from 'primevue'
+import { Dialog, InputGroup, InputGroupAddon, InputText, DataTable, Column } from 'primevue'
 import Button from 'primevue/button'
 import { computed, onMounted, ref } from 'vue'
 
@@ -20,9 +20,9 @@ const ventasFiltradas = computed(() => {
   return ventas.value.filter(
     (venta) =>
       (
-        venta.cliente?.nombre?.toLowerCase() +
+        (venta.cliente?.nombre?.toLowerCase() || '') +
         ' ' +
-        venta.cliente?.apellido?.toLowerCase()
+        (venta.cliente?.apellido?.toLowerCase() || '')
       ).includes(busqueda.value.toLowerCase()) ||
       (venta.fecha && venta.fecha.toLowerCase().includes(busqueda.value.toLowerCase())) ||
       (venta.total !== undefined && venta.total.toString().includes(busqueda.value)),
@@ -52,59 +52,71 @@ defineExpose({ obtenerLista })
 
 <template>
   <div>
-    <div class="col-7 pl-0 mt-3">
+    <div class="col-7 pl-0 mt-2">
       <InputGroup>
         <InputGroupAddon><i class="pi pi-search"></i></InputGroupAddon>
         <InputText v-model="busqueda" type="text" placeholder="Buscar por cliente, fecha o total" />
       </InputGroup>
     </div>
-    <table>
-      <thead>
-        <tr>
-          <th>Nro.</th>
-          <th>Cliente</th>
-          <th>Fecha</th>
-          <th>Total</th>
-          <th>Efectivo</th>
-          <th>Cambio</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(venta, index) in ventasFiltradas" :key="venta.id">
-          <td>{{ index + 1 }}</td>
-          <td>{{ venta.cliente?.nombre }} {{ venta.cliente?.apellido }}</td>
-          <td>{{ venta.fecha }}</td>
-          <td>{{ Number(venta.total).toFixed(2) }}</td>
-          <td>
+    <div>
+      <DataTable
+        :value="ventasFiltradas"
+        paginator
+        scrollable
+        scrollHeight="flex"
+        :rows="5"
+        :rowsPerPageOptions="[5, 10, 20, 50]"
+        tableStyle="min-width: 60rem"
+        paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+        currentPageReportTemplate="{first} a {last} de {totalRecords}"
+        class="mt-3"
+      >
+        <Column header="Cliente">
+          <template #body="{ data }">
+            {{ data.cliente?.nombre }} {{ data.cliente?.apellido }}
+          </template>
+        </Column>
+        <Column field="fecha" header="Fecha">
+          <template #body="{ data }">
+            {{ data.fecha ? new Date(data.fecha).toLocaleDateString('es-BO') : '' }}
+          </template></Column
+        >
+        <Column field="total" header="Total">
+          <template #body="{ data }">
+            {{ Number(data.total).toFixed(2) }}
+          </template>
+        </Column>
+        <Column field="efectivo" header="Efectivo">
+          <template #body="{ data }">
             {{
-              venta.efectivo !== null && venta.efectivo !== undefined
-                ? Number(venta.efectivo).toFixed(2)
+              data.efectivo !== null && data.efectivo !== undefined
+                ? Number(data.efectivo).toFixed(2)
                 : ''
             }}
-          </td>
-          <td>
+          </template>
+        </Column>
+        <Column field="cambio" header="Cambio">
+          <template #body="{ data }">
             {{
-              venta.cambio !== null && venta.cambio !== undefined
-                ? Number(venta.cambio).toFixed(2)
+              data.cambio !== null && data.cambio !== undefined
+                ? Number(data.cambio).toFixed(2)
                 : ''
             }}
-          </td>
-          <td>
+          </template>
+        </Column>
+        <Column header="Acciones" style="width: 100px">
+          <template #body="{ data }">
             <Button
               icon="pi pi-trash"
               aria-label="Eliminar"
               severity="danger"
               text
-              @click="mostrarEliminarConfirm(venta)"
+              @click="mostrarEliminarConfirm(data)"
             />
-          </td>
-        </tr>
-        <tr v-if="ventasFiltradas.length === 0">
-          <td colspan="7">No se encontraron resultados.</td>
-        </tr>
-      </tbody>
-    </table>
+          </template>
+        </Column>
+      </DataTable>
+    </div>
 
     <Dialog
       v-model:visible="mostrarConfirmDialog"
@@ -119,7 +131,7 @@ defineExpose({ obtenerLista })
           severity="secondary"
           @click="mostrarConfirmDialog = false"
         />
-        <Button type="button" label="Eliminar" @click="eliminar" />
+        <Button type="button" label="Eliminar" severity="danger" @click="eliminar" />
       </div>
     </Dialog>
   </div>

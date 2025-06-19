@@ -57,47 +57,35 @@ async function handleSave() {
   <div class="card flex justify-center">
     <Dialog
       v-model:visible="dialogVisible"
-      :header="props.modoEdicion ? 'Editar' : 'Crear'"
+      :header="props.modoEdicion ? 'Editar Cliente' : 'Nuevo Cliente'"
       style="width: 25rem"
     >
-      <div class="flex items-center gap-4 mb-4">
-        <label for="nombre" class="font-semibold w-3">Nombre</label>
-        <InputText
-          id="nombre"
-          v-model="cliente.nombre"
-          class="flex-auto"
-          autocomplete="off"
-          autofocus
-        />
-      </div>
-      <div class="flex items-center gap-4 mb-4">
-        <label for="apellido" class="font-semibold w-3">Apellido</label>
-        <InputText
-          id="apellido"
-          v-model="cliente.apellido"
-          class="flex-auto"
-          autocomplete="off"
-        />
-      </div>
-      <div class="flex items-center gap-4 mb-4">
-        <label for="ci" class="font-semibold w-3">Carnet de Identidad</label>
-        <InputText
-          id="ci"
-          v-model="cliente.ci"
-          class="flex-auto"
-          autocomplete="off"
-        />
-      </div>
-      <div class="flex justify-end gap-2">
-        <Button
-          type="button"
-          label="Cancelar"
-          icon="pi pi-times"
-          severity="secondary"
-          @click="dialogVisible = false"
-        ></Button>
-        <Button type="button" label="Guardar" icon="pi pi-save" @click="handleSave"></Button>
-      </div>
+      <form @submit.prevent="handleSave">
+        <div class="flex flex-column gap-3">
+          <label for="nombre" class="font-semibold">Nombre</label>
+          <InputText id="nombre" v-model="cliente.nombre" class="w-full" required />
+
+          <label for="apellido" class="font-semibold">Apellido</label>
+          <InputText id="apellido" v-model="cliente.apellido" class="w-full" required />
+
+          <label for="ci" class="font-semibold">Carnet de Identidad</label>
+          <InputText id="ci" v-model="cliente.ci" class="w-full" required />
+        </div>
+        <div class="flex justify-end gap-2 mt-4">
+          <Button
+            type="button"
+            label="Cancelar"
+            icon="pi pi-times"
+            severity="secondary"
+            @click="dialogVisible = false"
+          ></Button>
+          <Button
+            type="submit"
+            :label="props.modoEdicion ? 'Actualizar' : 'Guardar'"
+            icon="pi pi-save"
+          />
+        </div>
+      </form>
     </Dialog>
   </div>
 </template>

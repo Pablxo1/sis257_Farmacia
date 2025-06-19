@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import ProductoList from '@/components/producto/ProductoList.vue'
 import ProductoSave from '@/components/producto/ProductoSave.vue'
-import Button from 'primevue/button'
+import { Button } from 'primevue'
 import { ref } from 'vue'
 
 const mostrarDialog = ref(false)
@@ -24,13 +24,14 @@ function handleCloseDialog() {
 
 function handleGuardar() {
   productoListRef.value?.obtenerLista()
+  mostrarDialog.value = false
 }
 </script>
 
 <template>
-  <div class="m-7">
+  <div class="m-7 fade-in">
     <h2>Productos</h2>
-    <Button label="Crear Nuevo" icon="pi pi-plus" @click="handleCreate" />
+    <Button label="Nuevo Producto" icon="pi pi-plus" @click="handleCreate" class="mb-3" />
     <ProductoList ref="productoListRef" @edit="handleEdit" />
     <ProductoSave
       :mostrar="mostrarDialog"

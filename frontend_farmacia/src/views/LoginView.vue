@@ -13,58 +13,151 @@ function onSubmit() {
 </script>
 
 <template>
-  <div class="my-5 pt-5">
-    <h1 class="text-center">Iniciar Sesión</h1>
-    <form class="form" @submit.prevent="onSubmit">
-      <label class="form-label">Usuario:</label>
-      <input v-model="usuario" type="text" class="form-input" placeholder="Usuario" autofocus />
-
-      <label class="form-label">Contraseña:</label>
-      <input v-model="clave" type="password" class="form-input" placeholder="Contraseña" />
-
-      <p v-if="error" class="text-danger">Usuario y/o contraseña incorrectos</p>
-      <input type="submit" class="form-submit" value="Ingresar" />
+  <div class="login-bg fade-in">
+    <form class="login-card" @submit.prevent="onSubmit">
+      <div class="login-header">
+        <span class="material-symbols-outlined login-icon">admin_meds</span>
+        <h1 class="login-title">Sistema Farmacia</h1>
+        <p class="login-subtitle">Iniciar Sesión</p>
+      </div>
+      <div class="login-group">
+        <label class="login-label" for="usuario">Usuario</label>
+        <div class="login-input-wrapper">
+          <span class="material-symbols-outlined login-input-icon">person</span>
+          <input v-model="usuario" id="usuario" type="text" class="login-input" placeholder="Usuario" autofocus />
+        </div>
+      </div>
+      <div class="login-group">
+        <label class="login-label" for="clave">Contraseña</label>
+        <div class="login-input-wrapper">
+          <span class="material-symbols-outlined login-input-icon">lock</span>
+          <input v-model="clave" id="clave" type="password" class="login-input" placeholder="Contraseña" />
+        </div>
+      </div>
+      <p v-if="error" class="login-error">Usuario y/o contraseña incorrectos</p>
+      <button type="submit" class="login-btn">Ingresar</button>
     </form>
   </div>
 </template>
 
 <style>
-.form {
-  margin: 1.5rem auto;
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined');
+
+.login-bg {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #e3f2fd 0%, #f5f5f5 100%);
   display: flex;
-  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  width: 20%;
-  min-width: 350px;
-  max-width: 100%;
-  background: rgba(19, 35, 47, 0.9);
-  border-radius: 5px;
-  padding: 40px;
-  box-shadow: 0 4px 10px 4px rgba(0, 0, 0, 0.3);
 }
 
-.form-label {
-  margin-top: 2rem;
-  color: white;
+.login-card {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 6px 32px 0 rgba(25, 118, 210, 0.10);
+  border: 1px solid #bbdefb;
+  padding: 2.5rem 2rem 2rem 2rem;
+  width: 100%;
+  max-width: 370px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.login-header {
+  text-align: center;
   margin-bottom: 0.5rem;
 }
 
-.form-input {
-  padding: 10px 15px;
-  background: none;
-  background-image: none;
-  border: 1px solid white;
-  color: white;
+.login-icon {
+  font-size: 3.2rem;
+  color: #1976d2;
+  margin-bottom: 0.2rem;
 }
 
-.form-submit {
-  background: #ee5007;
+.login-title {
+  color: #1976d2;
+  font-weight: 800;
+  letter-spacing: 1px;
+  margin: 0.2rem 0 0.1rem 0;
+  font-size: 1.6rem;
+}
+
+.login-subtitle {
+  color: #43a047;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+.login-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.login-label {
+  color: #1976d2;
+  font-weight: 600;
+  margin-bottom: 0.1rem;
+  font-size: 1rem;
+}
+
+.login-input-wrapper {
+  display: flex;
+  align-items: center;
+  background: #e3f2fd;
+  border-radius: 6px;
+  border: 1px solid #bbdefb;
+  padding: 0.2rem 0.7rem;
+  transition: border 0.2s;
+}
+
+.login-input-icon {
+  color: #1976d2;
+  font-size: 1.5rem;
+  margin-right: 0.5rem;
+}
+
+.login-input {
   border: none;
-  border-radius: 5rem;
-  color: white;
-  margin-top: 3rem;
-  padding: 1rem 0;
+  background: transparent;
+  outline: none;
+  color: #1976d2;
+  font-size: 1rem;
+  flex: 1;
+  padding: 0.6rem 0;
+}
+
+.login-input:focus {
+  outline: none;
+}
+
+.login-btn {
+  background: linear-gradient(90deg, #43a047 60%, #1976d2 100%);
+  border: none;
+  border-radius: 2rem;
+  color: #fff;
+  margin-top: 1.2rem;
+  padding: 0.9rem 0;
+  font-weight: 700;
+  font-size: 1.1rem;
   cursor: pointer;
   transition: background 0.2s;
+  box-shadow: 0 2px 8px 0 rgba(25, 118, 210, 0.07);
+}
+
+.login-btn:hover {
+  background: linear-gradient(90deg, #388e3c 60%, #1565c0 100%);
+}
+
+.login-error {
+  color: #e53935;
+  margin-top: 0.5rem;
+  font-weight: 600;
+  text-align: center;
+  font-size: 0.98rem;
+  letter-spacing: 0.5px;
 }
 </style>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Producto } from '@/models/producto'
 import http from '@/plugins/axios'
-import { Dialog, InputGroup, InputGroupAddon, InputText } from 'primevue'
+import { Dialog, InputGroup, InputGroupAddon, InputText, DataTable, Column } from 'primevue'
 import Button from 'primevue/button'
 import { computed, onMounted, ref } from 'vue'
 
@@ -51,57 +51,64 @@ defineExpose({ obtenerLista })
 
 <template>
   <div>
-    <div class="col-7 pl-0 mt-3">
+    <div class="col-7 pl-0 mt-2">
       <InputGroup>
         <InputGroupAddon><i class="pi pi-search"></i></InputGroupAddon>
-        <InputText v-model="busqueda" type="text" placeholder="Buscar por nombre" />
+        <InputText
+          v-model="busqueda"
+          type="text"
+          placeholder="Buscar por nombre, descripción, presentación, etc."
+        />
       </InputGroup>
     </div>
-    <table>
-      <thead>
-        <tr>
-          <th>Nro.</th>
-          <th>Nombre</th>
-          <th>Descripcion</th>
-          <th>Presentacion</th>
-          <th>Concentracion</th>
-          <th>Precio de Venta</th>
-          <th>Precio de Compra</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(producto, index) in productosFiltrados" :key="producto.id">
-          <td>{{ index + 1 }}</td>
-          <td>{{ producto.nombre }}</td>
-          <td>{{ producto.descripcion }}</td>
-          <td>{{ producto.presentacion }}</td>
-          <td>{{ producto.concentracion }}</td>
-          <td>{{ Number(producto.precioVenta).toFixed(2) }}</td>
-          <td>{{ Number(producto.precioCompra).toFixed(2) }}</td>
-          <td>
-            <Button icon="pi pi-pencil" aria-label="Editar" text @click="emitirEdicion(producto)" />
+    <div>
+      <DataTable
+        :value="productosFiltrados"
+        paginator
+        scrollable
+        scrollHeight="flex"
+        :rows="5"
+        :rowsPerPageOptions="[5, 10, 20, 50]"
+        tableStyle="min-width: 60rem"
+        paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+        currentPageReportTemplate="{first} a {last} de {totalRecords}"
+        class="mt-3"
+      >
+        <Column field="nombre" header="Nombre"></Column>
+        <Column field="descripcion" header="Descripción"></Column>
+        <Column field="presentacion" header="Presentación"></Column>
+        <Column field="concentracion" header="Concentración"></Column>
+        <Column field="precioVenta" header="Precio de Venta">
+          <template #body="{ data }">
+            {{ Number(data.precioVenta).toFixed(2) }}
+          </template>
+        </Column>
+        <Column field="precioCompra" header="Precio de Compra">
+          <template #body="{ data }">
+            {{ Number(data.precioCompra).toFixed(2) }}
+          </template>
+        </Column>
+        <Column header="Acciones" style="width: 120px">
+          <template #body="{ data }">
+            <Button icon="pi pi-pencil" aria-label="Editar" text @click="emitirEdicion(data)" />
             <Button
               icon="pi pi-trash"
               aria-label="Eliminar"
               severity="danger"
               text
-              @click="mostrarEliminarConfirm(producto)"
+              @click="mostrarEliminarConfirm(data)"
             />
-          </td>
-        </tr>
-        <tr v-if="productosFiltrados.length === 0">
-          <td colspan="4">No se encontraron resultados.</td>
-        </tr>
-      </tbody>
-    </table>
+          </template>
+        </Column>
+      </DataTable>
+    </div>
 
     <Dialog
       v-model:visible="mostrarConfirmDialog"
       header="Confirmar Eliminación"
       :style="{ width: '25rem' }"
     >
-      <p>¿Estás seguro de que deseas eliminar este registro?</p>
+      <p>¿Estás seguro de que deseas eliminar este producto?</p>
       <div class="flex justify-end gap-2">
         <Button
           type="button"
@@ -109,10 +116,8 @@ defineExpose({ obtenerLista })
           severity="secondary"
           @click="mostrarConfirmDialog = false"
         />
-        <Button type="button" label="Eliminar" @click="eliminar" />
+        <Button type="button" label="Eliminar" severity="danger" @click="eliminar" />
       </div>
     </Dialog>
   </div>
 </template>
-
-<style scoped></style>

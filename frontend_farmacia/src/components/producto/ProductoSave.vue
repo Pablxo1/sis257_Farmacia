@@ -25,18 +25,29 @@ const dialogVisible = computed({
 })
 
 const producto = ref<Producto>({ ...props.producto })
-const precioVentaString = ref(producto.value.precioVenta !== undefined ? String(producto.value.precioVenta) : '')
-const precioCompraString = ref(producto.value.precioCompra !== undefined ? String(producto.value.precioCompra) : '')
+const precioVentaString = ref(
+  producto.value.precioVenta !== undefined ? String(producto.value.precioVenta) : '',
+)
+const precioCompraString = ref(
+  producto.value.precioCompra !== undefined ? String(producto.value.precioCompra) : '',
+)
 
 watch(
   () => props.producto,
   (newVal) => {
-    producto.value = { ...newVal }
-    precioVentaString.value = newVal.precioVenta !== undefined ? String(newVal.precioVenta) : ''
-    precioCompraString.value = newVal.precioCompra !== undefined ? String(newVal.precioCompra) : ''
+    if (newVal && Object.keys(newVal).length > 0) {
+      producto.value = { ...newVal }
+      precioVentaString.value = newVal.precioVenta !== undefined ? String(newVal.precioVenta) : ''
+      precioCompraString.value =
+        newVal.precioCompra !== undefined ? String(newVal.precioCompra) : ''
+    } else {
+      producto.value = {} as Producto
+      precioVentaString.value = ''
+      precioCompraString.value = ''
+    }
   },
+  { immediate: true },
 )
-
 async function handleSave() {
   try {
     const body = {
@@ -67,76 +78,86 @@ async function handleSave() {
   <div class="card flex justify-center">
     <Dialog
       v-model:visible="dialogVisible"
-      :header="props.modoEdicion ? 'Editar' : 'Crear'"
-      style="width: 25rem"
+      :header="props.modoEdicion ? 'Editar Producto' : 'Nuevo Producto'"
+      style="width: 30rem"
     >
-      <div class="flex items-center gap-4 mb-4">
-        <label for="nombre" class="font-semibold w-3">Nombre</label>
-        <InputText
-          id="nombre"
-          v-model="producto.nombre"
-          class="flex-auto"
-          autocomplete="off"
-          autofocus
-        />
-      </div>
-      <div class="flex items-center gap-4 mb-4">
-        <label for="descripcion" class="font-semibold w-3">Descripcion</label>
-        <InputText
-          id="descripcion"
-          v-model="producto.descripcion"
-          class="flex-auto"
-          autocomplete="off"
-        />
-      </div>
-      <div class="flex items-center gap-4 mb-4">
-        <label for="presentacion" class="font-semibold w-3">Presentacion</label>
-        <InputText
-          id="presentacion"
-          v-model="producto.presentacion"
-          class="flex-auto"
-          autocomplete="off"
-        />
-      </div>
-      <div class="flex items-center gap-4 mb-4">
-        <label for="concentracion" class="font-semibold w-3">Concentracion</label>
-        <InputText
-          id="concentracion"
-          v-model="producto.concentracion"
-          class="flex-auto"
-          autocomplete="off"
-        />
-      </div>
-      <div class="flex items-center gap-4 mb-4">
-        <label for="precioVenta" class="font-semibold w-3">Precio de Venta</label>
-        <InputText
-          id="precioVenta"
-          v-model="precioVentaString"
-          class="flex-auto"
-          autocomplete="off"
-          type="number"
-        />
-      </div>
-      <div class="flex items-center gap-4 mb-4">
-        <label for="precioCompra" class="font-semibold w-3">Precio de Compra</label>
-        <InputText
-          id="precioCompra"
-          v-model="precioCompraString"
-          class="flex-auto"
-          autocomplete="off"
-          type="number"
-        />
-      </div>
-      <div class="flex justify-end gap-2">
-        <Button
-          type="button"
-          label="Cancelar"
-          icon="pi pi-times"
-          severity="secondary"
-          @click="dialogVisible = false"
-        ></Button>
-        <Button type="button" label="Guardar" icon="pi pi-save" @click="handleSave"></Button>
-      </div>
+      <form @submit.prevent="handleSave">
+        <div class="flex items-center gap-4 mb-4">
+          <label for="nombre" class="font-semibold w-3">Nombre</label>
+          <InputText
+            id="nombre"
+            v-model="producto.nombre"
+            class="flex-auto"
+            autocomplete="off"
+            autofocus
+            required
+          />
+        </div>
+        <div class="flex items-center gap-4 mb-4">
+          <label for="descripcion" class="font-semibold w-3">Descripción</label>
+          <InputText
+            id="descripcion"
+            v-model="producto.descripcion"
+            class="flex-auto"
+            autocomplete="off"
+            required
+          />
+        </div>
+        <div class="flex items-center gap-4 mb-4">
+          <label for="presentacion" class="font-semibold w-3">Presentación</label>
+          <InputText
+            id="presentacion"
+            v-model="producto.presentacion"
+            class="flex-auto"
+            autocomplete="off"
+            required
+          />
+        </div>
+        <div class="flex items-center gap-4 mb-4">
+          <label for="concentracion" class="font-semibold w-3">Concentración</label>
+          <InputText
+            id="concentracion"
+            v-model="producto.concentracion"
+            class="flex-auto"
+            autocomplete="off"
+            required
+          />
+        </div>
+        <div class="flex items-center gap-4 mb-4">
+          <label for="precioVenta" class="font-semibold w-3">Precio de Venta</label>
+          <InputText
+            id="precioVenta"
+            v-model="precioVentaString"
+            class="flex-auto"
+            autocomplete="off"
+            type="number"
+          />
+        </div>
+        <div class="flex items-center gap-4 mb-4">
+          <label for="precioCompra" class="font-semibold w-3">Precio de Compra</label>
+          <InputText
+            id="precioCompra"
+            v-model="precioCompraString"
+            class="flex-auto"
+            autocomplete="off"
+            type="number"
+          />
+        </div>
+        <div class="flex justify-end gap-2">
+          <Button
+            type="button"
+            label="Cancelar"
+            icon="pi pi-times"
+            severity="secondary"
+            @click="dialogVisible = false"
+          ></Button>
+          <Button
+            type="submit"
+            :label="props.modoEdicion ? 'Actualizar' : 'Guardar'"
+            icon="pi pi-save"
+          />
+        </div>
+      </form>
     </Dialog>
   </div>
 </template>

@@ -73,21 +73,27 @@ async function handleSave() {
 
 watch(
   () => props.mostrar,
-  (nuevoValor) => {
+  async (nuevoValor) => {
     if (nuevoValor) {
-      obtenerProductos()
-      obtenerDistribuidoras()
+      await obtenerProductos()
+      await obtenerDistribuidoras()
       if (props.inventario?.id) {
-        inventario.value = { ...props.inventario }
-        cantidadString.value = inventario.value.cantidad !== undefined ? String(inventario.value.cantidad) : ''
+        inventario.value = {
+          ...props.inventario,
+          idProducto: props.inventario.idProducto ?? props.inventario.producto?.id ?? null,
+          idDistribuidora:
+            props.inventario.idDistribuidora ?? props.inventario.distribuidora?.id ?? null,
+        }
+        cantidadString.value =
+          inventario.value.cantidad !== undefined ? String(inventario.value.cantidad) : ''
       } else {
         inventario.value = {} as Inventario
         cantidadString.value = ''
-        // Poner fecha actual por defecto
         inventario.value.fechaIngresoAlmacen = new Date()
       }
     }
   },
+  { immediate: true },
 )
 </script>
 
@@ -108,6 +114,7 @@ watch(
           optionValue="id"
           class="flex-auto"
           placeholder="Seleccione un producto"
+          filter
         />
       </div>
       <div class="flex items-center gap-4 mb-4">
@@ -120,6 +127,7 @@ watch(
           optionValue="id"
           class="flex-auto"
           placeholder="Seleccione una distribuidora"
+          filter
         />
       </div>
       <div class="flex items-center gap-4 mb-4">

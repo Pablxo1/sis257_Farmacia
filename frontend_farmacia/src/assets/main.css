@@ -1,35 +1,98 @@
 @import './base.css';
 
 #app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
   font-weight: normal;
 }
 
 a,
 .green {
   text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
+  color: #1976d2;
   transition: 0.4s;
   padding: 3px;
 }
-
 @media (hover: hover) {
   a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
+    background-color: #e3f2fd;
+  }
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
-  }
+.fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
 
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
-  }
+.p-datatable,
+.p-datatable {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(4, 4, 4, 0.25);
+}
+.p-datatable-thead > tr > th,
+.p-datatable .p-datatable-tbody > tr > td {
+  background: #e2eef9;
+  color: #222;
+}
+.p-datatable .p-datatable-tbody > tr.p-highlight,
+.p-datatable .p-datatable-tbody > tr:hover {
+  background: #e3f2fd !important;
+}
+
+.p-button,
+.p-button.p-button-primary {
+  background: #3080d0 !important;
+  border-color: #3080d0 !important;
+  color: #fff !important;
+}
+.p-button.p-button-secondary {
+  background: #bdbdbd !important;
+  border-color: #bdbdbd !important;
+  color: #222 !important;
+}
+.p-button.p-button-danger {
+  background: #e53935 !important;
+  border-color: #e53935 !important;
+  color: #fff !important;
+}
+
+h2 {
+  color: #1976d2;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.p-inputtext,
+.p-inputgroup,
+.p-inputgroup-addon {
+  background: #fff !important;
+  color: #222 !important;
+  border-color: #bdbdbd !important;
+}
+.p-inputgroup-addon {
+  background: #fde3e3 !important;
+  color: #1976d2 !important;
+  border-radius: 6px 0 0 6px !important;
+}
+.p-inputgroup-addon .pi {
+  color: #1976d2 !important;
+}
+.sidebar.collapsed .sidebar-nav .nav-link {
+  justify-content: center !important;
+}
+
+.sidebar.collapsed .nav-link i {
+  margin-right: 0 !important;
+}
+
+.sidebar.collapsed .nav-link span {
+  display: none !important;
 }

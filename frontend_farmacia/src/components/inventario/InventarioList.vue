@@ -80,6 +80,7 @@ defineExpose({ obtenerLista })
         tableStyle="min-width: 60rem"
         paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
         currentPageReportTemplate="{first} a {last} de {totalRecords}"
+        class="mt-3"
       >
         <Column
           field="producto.nombre"
@@ -99,12 +100,20 @@ defineExpose({ obtenerLista })
         ></Column>
         <Column field="producto.precioCompra" header="Precio de Compra" style="min-width: 100px">
           <template #body="{ data }">
-            {{ isNaN(Number(data.producto.precioCompra)) ? '' : Number(data.producto.precioCompra).toFixed(2) }}
+            {{
+              isNaN(Number(data.producto.precioCompra))
+                ? ''
+                : Number(data.producto.precioCompra).toFixed(2)
+            }}
           </template>
         </Column>
         <Column field="producto.precioVenta" header="Precio de Venta" style="min-width: 100px">
           <template #body="{ data }">
-            {{ isNaN(Number(data.producto.precioVenta)) ? '' : Number(data.producto.precioVenta).toFixed(2) }}
+            {{
+              isNaN(Number(data.producto.precioVenta))
+                ? ''
+                : Number(data.producto.precioVenta).toFixed(2)
+            }}
           </template>
         </Column>
         <Column
@@ -113,7 +122,11 @@ defineExpose({ obtenerLista })
           sortable
           style="min-width: 120px"
         ></Column>
-        <Column field="cantidad" header="Cantidad" style="min-width: 80px"></Column>
+        <Column field="cantidad" header="Cantidad" style="min-width: 80px">
+          <template #body="{ data }">
+            <span style="font-weight: bold">{{ data.cantidad }}</span>
+          </template>
+        </Column>
         <Column field="fechaIngresoAlmacen" header="Fecha de Ingreso" style="min-width: 120px">
           <template #body="{ data }">
             {{ new Date(data.fechaIngresoAlmacen).toLocaleDateString() }}

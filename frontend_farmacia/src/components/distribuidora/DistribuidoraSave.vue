@@ -89,14 +89,9 @@ async function handleSave() {
           autocomplete="off"
         />
       </div>
-       <div class="flex items-center gap-4 mb-4">
+      <div class="flex items-center gap-4 mb-4">
         <label for="email" class="font-semibold w-3">Email</label>
-        <InputText
-          id="email"
-          v-model="distribuidora.email"
-          class="flex-auto"
-          autocomplete="off"
-        />
+        <InputText id="email" v-model="distribuidora.email" class="flex-auto" autocomplete="off" />
       </div>
       <div class="flex justify-end gap-2">
         <Button

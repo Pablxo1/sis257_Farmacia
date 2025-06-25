@@ -7,6 +7,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -47,4 +48,7 @@ export class Inventario {
   @ManyToOne(() => Distribuidora, distribuidora => distribuidora.inventarios)
   @JoinColumn({ name: 'id_distribuidora', referencedColumnName: 'id' })
   distribuidora: Distribuidora;
+
+  @OneToMany(() => Inventario, inventario => inventario.id)
+  itemVentas: Inventario[];
 }

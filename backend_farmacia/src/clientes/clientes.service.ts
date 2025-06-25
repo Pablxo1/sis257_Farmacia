@@ -1,13 +1,22 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Cliente } from './entities/cliente.entity';
+import { Venta } from '../ventas/entities/venta.entity';
 
 @Injectable()
 export class ClientesService {
-  constructor(@InjectRepository(Cliente) private clientesRepository: Repository<Cliente>) {}
+  constructor(
+    @InjectRepository(Cliente) private clientesRepository: Repository<Cliente>,
+    @InjectRepository(Venta) private ventasRepository: Repository<Venta>,
+  ) {}
 
   async create(createClienteDto: CreateClienteDto): Promise<Cliente> {
     const existe = await this.clientesRepository.findOneBy({
@@ -42,7 +51,12 @@ export class ClientesService {
   }
 
   async remove(id: number) {
-    const cliente = await this.findOne(id);
-    if (cliente) return this.clientesRepository.softRemove(cliente);
+    const ventas = await this.ventasRepository.count({ where: { idCliente: id } });
+    if (ventas > 0) {
+      throw new BadRequestException(
+        'No se puede eliminar el cliente porque tiene ventas registradas.',
+      );
+    }
+    return this.clientesRepository.softRemove({ id });
   }
 }

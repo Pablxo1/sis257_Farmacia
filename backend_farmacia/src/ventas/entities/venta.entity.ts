@@ -1,5 +1,6 @@
 import { Cliente } from 'src/clientes/entities/cliente.entity';
 import { ItemVenta } from 'src/item-ventas/entities/item-venta.entity';
+import { Usuario } from 'src/usuarios/entities/usuario.entity';
 import {
   Column,
   CreateDateColumn,
@@ -19,6 +20,9 @@ export class Venta {
 
   @Column('integer', { name: 'id_Cliente' })
   idCliente: number;
+
+  @Column('integer', { name: 'id_usuario', nullable: true })
+  idUsuario: number;
 
   @Column('timestamp', { default: () => 'CURRENT_TIMESTAMP' })
   fecha: Date;
@@ -47,4 +51,8 @@ export class Venta {
   @ManyToOne(() => Cliente, cliente => cliente.ventas)
   @JoinColumn({ name: 'id_Cliente', referencedColumnName: 'id' })
   cliente: Cliente;
+
+  @ManyToOne(() => Usuario)
+  @JoinColumn({ name: 'id_usuario', referencedColumnName: 'id' })
+  usuario: Usuario;
 }

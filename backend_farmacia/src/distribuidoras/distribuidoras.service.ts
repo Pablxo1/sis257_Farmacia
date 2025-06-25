@@ -1,4 +1,9 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateDistribuidoraDto } from './dto/create-distribuidora.dto';
 import { UpdateDistribuidoraDto } from './dto/update-distribuidora.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -46,7 +51,14 @@ export class DistribuidorasService {
   }
 
   async remove(id: number) {
-    const distribuidora = await this.findOne(id);
-    if (distribuidora) return this.distribuidorasRepository.softRemove(distribuidora);
+    const inventarios = await this.distribuidorasRepository.manager
+      .getRepository('Inventario')
+      .count({ where: { idDistribuidora: id } });
+    if (inventarios > 0) {
+      throw new BadRequestException(
+        'No se puede eliminar la distribuidora porque tiene inventarios registrados.',
+      );
+    }
+    return this.distribuidorasRepository.softRemove({ id });
   }
 }

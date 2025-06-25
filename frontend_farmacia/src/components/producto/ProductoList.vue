@@ -38,9 +38,13 @@ function mostrarEliminarConfirm(producto: Producto) {
 }
 
 async function eliminar() {
-  await http.delete(`${ENDPOINT}/${productoDelete.value?.id}`)
-  obtenerLista()
-  mostrarConfirmDialog.value = false
+  try {
+    await http.delete(`${ENDPOINT}/${productoDelete.value?.id}`)
+    obtenerLista()
+    mostrarConfirmDialog.value = false
+  } catch (error: any) {
+    alert(error?.response?.data?.message || 'No se pudo eliminar el producto.')
+  }
 }
 
 onMounted(() => {
@@ -74,7 +78,13 @@ defineExpose({ obtenerLista })
         currentPageReportTemplate="{first} a {last} de {totalRecords}"
         class="mt-3"
       >
-        <Column field="nombre" header="Nombre"></Column>
+        <Column field="nombre" header="Nombre">
+          <template #body="{ data }">
+            <span style="font-weight: 700; color: black">
+              {{ data.nombre }}
+            </span>
+          </template>
+        </Column>
         <Column field="descripcion" header="Descripción"></Column>
         <Column field="presentacion" header="Presentación"></Column>
         <Column field="concentracion" header="Concentración"></Column>
@@ -105,19 +115,57 @@ defineExpose({ obtenerLista })
 
     <Dialog
       v-model:visible="mostrarConfirmDialog"
-      header="Confirmar Eliminación"
-      :style="{ width: '25rem' }"
+      header="❗ Confirmar Eliminación"
+      :style="{ width: '28rem', maxWidth: '98vw' }"
+      modal
     >
-      <p>¿Estás seguro de que deseas eliminar este producto?</p>
-      <div class="flex justify-end gap-2">
-        <Button
-          type="button"
-          label="Cancelar"
-          severity="secondary"
-          @click="mostrarConfirmDialog = false"
-        />
-        <Button type="button" label="Eliminar" severity="danger" @click="eliminar" />
+      <div class="eliminar-dialog-content">
+        <div class="icono-advertencia">
+          <i class="pi pi-exclamation-triangle" style="font-size: 2.5rem; color: #e53935"></i>
+        </div>
+        <div class="mensaje-advertencia">
+          <p style="font-size: 1.1rem; margin-bottom: 0.5rem">
+            ¿Estás seguro de que deseas eliminar el producto
+            <span style="font-weight: bold; color: #1976d2">
+              {{ productoDelete?.nombre }}
+            </span>
+            ?
+          </p>
+          <p style="color: #e53935; font-size: 0.95rem">Esta acción no se puede deshacer.</p>
+        </div>
+        <div class="flex justify-end gap-2 mt-3">
+          <Button
+            type="button"
+            label="Cancelar"
+            icon="pi pi-times"
+            severity="secondary"
+            @click="mostrarConfirmDialog = false"
+          />
+          <Button
+            type="button"
+            label="Eliminar"
+            icon="pi pi-trash"
+            severity="danger"
+            @click="eliminar"
+          />
+        </div>
       </div>
     </Dialog>
   </div>
 </template>
+
+<style scoped>
+.eliminar-dialog-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.7rem 0.2rem 0.2rem 0.2rem;
+}
+.icono-advertencia {
+  margin-bottom: 0.5rem;
+}
+.mensaje-advertencia {
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+</style>

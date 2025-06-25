@@ -16,11 +16,15 @@ export class VentasService {
     private inventariosService: InventariosService,
   ) {}
 
-  async create(createVentaDto: CreateVentaDto, itemsDto: CreateItemVentaDto[]): Promise<Venta> {
+  async create(
+    createVentaDto: CreateVentaDto,
+    itemsDto: CreateItemVentaDto[],
+    id: number,
+  ): Promise<Venta> {
     return await this.dataSource.transaction(async manager => {
-      // 1. Crear la venta
       const venta = manager.create(Venta, {
         idCliente: createVentaDto.idCliente,
+        idUsuario: id,
         fecha: createVentaDto.fecha,
         total: createVentaDto.total,
         efectivo: createVentaDto.efectivo,
@@ -46,18 +50,10 @@ export class VentasService {
 
   async findAll(): Promise<Venta[]> {
     return this.ventasRepository.find({
-      relations: { cliente: true },
-      select: {
-        id: true,
-        fecha: true,
-        total: true,
-        efectivo: true,
-        cambio: true,
-        cliente: {
-          id: true,
-          nombre: true,
-          apellido: true,
-        },
+      relations: {
+        cliente: true,
+        usuario: true,
+        itemVentas: { producto: true },
       },
       order: { fecha: 'DESC', id: 'DESC' },
     });

@@ -154,21 +154,57 @@ defineExpose({ obtenerLista })
 
     <Dialog
       v-model:visible="mostrarConfirmDialog"
-      header="Confirmar Eliminación"
-      :style="{ width: '25rem' }"
+      header="❗ Confirmar Eliminación"
+      :style="{ width: '28rem', maxWidth: '98vw' }"
+      modal
     >
-      <p>¿Estás seguro de que deseas eliminar este registro?</p>
-      <div class="flex justify-end gap-2">
-        <Button
-          type="button"
-          label="Cancelar"
-          severity="secondary"
-          @click="mostrarConfirmDialog = false"
-        />
-        <Button type="button" label="Eliminar" @click="eliminar" />
+      <div class="eliminar-dialog-content">
+        <div class="icono-advertencia">
+          <i class="pi pi-exclamation-triangle" style="font-size: 2.5rem; color: #e53935"></i>
+        </div>
+        <div class="mensaje-advertencia">
+          <p style="font-size: 1.1rem; margin-bottom: 0.5rem">
+            ¿Estás seguro de que deseas eliminar el registro de inventario
+            <span style="font-weight: bold; color: #1976d2">
+              {{ inventarioDelete?.producto?.nombre }}
+            </span>
+            ?
+          </p>
+          <p style="color: #e53935; font-size: 0.95rem">Esta acción no se puede deshacer.</p>
+        </div>
+        <div class="flex justify-end gap-2 mt-3">
+          <Button
+            type="button"
+            label="Cancelar"
+            icon="pi pi-times"
+            severity="secondary"
+            @click="mostrarConfirmDialog = false"
+          />
+          <Button
+            type="button"
+            label="Eliminar"
+            icon="pi pi-trash"
+            severity="danger"
+            @click="eliminar"
+          />
+        </div>
       </div>
     </Dialog>
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.eliminar-dialog-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.7rem 0.2rem 0.2rem 0.2rem;
+}
+.icono-advertencia {
+  margin-bottom: 0.5rem;
+}
+.mensaje-advertencia {
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+</style>

@@ -27,6 +27,7 @@ a,
   }
 }
 
+
 .fade-in {
   animation: fadeIn 0.5s ease-out;
 }
@@ -45,6 +46,9 @@ a,
 .p-datatable .p-datatable-tbody > tr.p-highlight,
 .p-datatable .p-datatable-tbody > tr:hover {
   background: #e3f2fd !important;
+}
+.p-datatable-frozen-column {
+  background: #e2eef9 !important;
 }
 
 .p-button,

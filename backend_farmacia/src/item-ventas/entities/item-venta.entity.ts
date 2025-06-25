@@ -1,3 +1,4 @@
+import { Inventario } from 'src/inventarios/entities/inventario.entity';
 import { Producto } from 'src/productos/entities/producto.entity';
 import { Venta } from 'src/ventas/entities/venta.entity';
 import {
@@ -22,6 +23,9 @@ export class ItemVenta {
   @Column('integer', { name: 'id_producto' })
   idProducto: number;
 
+  @Column('integer', { name: 'id_inventario', nullable: true })
+  idInventario?: number;
+
   @Column('int')
   cantidad: number;
 
@@ -38,10 +42,14 @@ export class ItemVenta {
   fechaEliminacion: Date;
 
   @ManyToOne(() => Producto, producto => producto.itemsVentas)
-  @JoinColumn({ name: 'id_itemVenta', referencedColumnName: 'id' })
+  @JoinColumn({ name: 'id_producto', referencedColumnName: 'id' })
   producto: Producto;
 
   @ManyToOne(() => Venta, venta => venta.itemVentas)
   @JoinColumn({ name: 'id_venta', referencedColumnName: 'id' })
   venta: Venta;
+
+  @ManyToOne(() => Inventario, inventario => inventario.itemVentas)
+  @JoinColumn({ name: 'id_inventario', referencedColumnName: 'id' })
+  inventario: Inventario;
 }

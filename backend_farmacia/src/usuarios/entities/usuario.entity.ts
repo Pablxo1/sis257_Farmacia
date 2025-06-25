@@ -5,10 +5,12 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { Venta } from 'src/ventas/entities/venta.entity';
 
 @Entity('usuarios')
 export class Usuario {
@@ -32,6 +34,10 @@ export class Usuario {
 
   @DeleteDateColumn({ name: 'fecha_eliminacion', select: false })
   fechaEliminacion: Date;
+
+  @OneToMany(() => Venta, ventas => ventas.usuario)
+  ventas: Venta[];
+
   @BeforeInsert()
   @BeforeUpdate()
   async hashPassword() {

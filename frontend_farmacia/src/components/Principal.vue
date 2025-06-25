@@ -44,10 +44,13 @@ function logout() {
         </span>
         <h4
           v-if="!sidebarCollapsed"
-          class="m-0 font-semibold text-lg"
-          style="letter-spacing: 1px; color: #fff"
+          class="m-0 font-bold text-xl"
+          style="letter-spacing: 1.5px; color: #fff; text-shadow: 0 2px 8px rgba(25, 118, 210, 0.25);"
         >
-          Sistema <span style="font-weight: 700">Farmacia</span>
+          <span style="font-weight: 800;">Sistema</span>
+          <span style="font-weight: 900; margin-left: 4px ; text-shadow: 0 2px 8px rgba(255, 214, 0, 0.25);">
+            Farmacia
+          </span>
         </h4>
       </div>
       <nav class="sidebar-nav flex flex-column gap-2">
@@ -73,13 +76,13 @@ function logout() {
             @click="toggleSidebar"
             aria-label="Toggle Sidebar"
           />
-          <div class="flex align-items-center gap-2">
+          <div class="page-title-container flex align-items-center gap-2">
             <i
               :class="menuItems.find((item) => item.name === $route.name)?.icon"
-              class="text-xl"
+              class="page-title-icon"
               v-if="menuItems.find((item) => item.name === $route.name)"
             ></i>
-            <span class="text-xl font-semibold" style="color: #1976d2">{{ currentPageTitle }}</span>
+            <span class="page-title-text">{{ currentPageTitle }}</span>
           </div>
         </div>
         <div>
@@ -188,5 +191,32 @@ function logout() {
 }
 .me-2 {
   margin-right: 0.5rem;
+}
+
+.page-title-container {
+  background: #e3f2fd;
+  border-radius: 12px;
+  padding: 0.5rem 1.3rem 0.5rem 1rem;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.08);
+  margin-left: 0.5rem;
+  margin-top: 0.2rem;
+  margin-bottom: 0.2rem;
+  min-width: 220px;
+  max-width: 100%;
+  align-items: center;
+}
+
+.page-title-icon {
+  font-size: 2rem !important;
+  color: #1976d2;
+  margin-right: 0.5rem;
+}
+
+.page-title-text {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #1976d2;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 8px rgba(25, 118, 210, 0.07);
 }
 </style>

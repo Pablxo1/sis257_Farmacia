@@ -1,14 +1,21 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateProductoDto } from './dto/create-producto.dto';
 import { UpdateProductoDto } from './dto/update-producto.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Producto } from './entities/producto.entity';
 import { Repository } from 'typeorm';
+import { Inventario } from '../inventarios/entities/inventario.entity';
 
 @Injectable()
 export class ProductosService {
   constructor(
     @InjectRepository(Producto) private readonly productosRepository: Repository<Producto>,
+    @InjectRepository(Inventario) private readonly inventariosRepository: Repository<Inventario>,
   ) {}
 
   async create(createProductoDto: CreateProductoDto): Promise<Producto> {
@@ -50,7 +57,10 @@ export class ProductosService {
   }
 
   async remove(id: number) {
-    const producto = await this.findOne(id);
-    if (producto) return this.productosRepository.softRemove(producto);
+    const inventarios = await this.inventariosRepository.count({ where: { idProducto: id } });
+    if (inventarios > 0) {
+      throw new BadRequestException('No se puede eliminar el producto porque está en inventario.');
+    }
+    return this.productosRepository.softRemove({ id });
   }
 }

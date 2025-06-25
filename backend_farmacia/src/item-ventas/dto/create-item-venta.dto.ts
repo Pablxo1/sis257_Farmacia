@@ -26,4 +26,9 @@ export class CreateItemVentaDto {
   @IsDefined({ message: 'El campo precio_Unitario debe estar definido' })
   @IsNumber({ maxDecimalPlaces: 2 }, { message: 'El precio debe tener máximo 2 decimales' })
   readonly precioUnitario: number;
+
+  @ApiProperty()
+  @Type(() => Number)
+  @IsInt({ message: 'El campo idInventario debe ser de tipo numérico' })
+  readonly idInventario?: number;
 }

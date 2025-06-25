@@ -35,9 +35,13 @@ function mostrarEliminarConfirm(cliente: Cliente) {
 }
 
 async function eliminar() {
-  await http.delete(`${ENDPOINT}/${clienteDelete.value?.id}`)
-  obtenerLista()
-  mostrarConfirmDialog.value = false
+  try {
+    await http.delete(`${ENDPOINT}/${clienteDelete.value?.id}`)
+    obtenerLista()
+    mostrarConfirmDialog.value = false
+  } catch (error: any) {
+    alert(error?.response?.data?.message || 'No se pudo eliminar el cliente.')
+  }
 }
 
 onMounted(() => {
@@ -69,7 +73,7 @@ defineExpose({ obtenerLista })
       >
         <Column field="nombre" header="Nombre" sortable></Column>
         <Column field="apellido" header="Apellido" sortable></Column>
-        <Column field="ci" header="CI"></Column>
+        <Column field="ci" header="Cedula de Identidad"></Column>
         <Column header="Acciones" style="width: 120px">
           <template #body="{ data }">
             <Button icon="pi pi-pencil" aria-label="Editar" text @click="emitirEdicion(data)" />
@@ -87,19 +91,57 @@ defineExpose({ obtenerLista })
 
     <Dialog
       v-model:visible="mostrarConfirmDialog"
-      header="Confirmar Eliminación"
-      :style="{ width: '25rem' }"
+      header="❗ Confirmar Eliminación"
+      :style="{ width: '28rem', maxWidth: '98vw' }"
+      modal
     >
-      <p>¿Estás seguro de que deseas eliminar este cliente?</p>
-      <div class="flex justify-end gap-2">
-        <Button
-          type="button"
-          label="Cancelar"
-          severity="secondary"
-          @click="mostrarConfirmDialog = false"
-        />
-        <Button type="button" label="Eliminar" severity="danger" @click="eliminar" />
+      <div class="eliminar-dialog-content">
+        <div class="icono-advertencia">
+          <i class="pi pi-exclamation-triangle" style="font-size: 2.5rem; color: #e53935"></i>
+        </div>
+        <div class="mensaje-advertencia">
+          <p style="font-size: 1.1rem; margin-bottom: 0.5rem">
+            ¿Estás seguro de que deseas eliminar el cliente
+            <span style="font-weight: bold; color: #1976d2">
+              {{ clienteDelete?.nombre }} {{ clienteDelete?.apellido }}
+            </span>
+            ?
+          </p>
+          <p style="color: #e53935; font-size: 0.95rem">Esta acción no se puede deshacer.</p>
+        </div>
+        <div class="flex justify-end gap-2 mt-3">
+          <Button
+            type="button"
+            label="Cancelar"
+            icon="pi pi-times"
+            severity="secondary"
+            @click="mostrarConfirmDialog = false"
+          />
+          <Button
+            type="button"
+            label="Eliminar"
+            icon="pi pi-trash"
+            severity="danger"
+            @click="eliminar"
+          />
+        </div>
       </div>
     </Dialog>
   </div>
 </template>
+
+<style scoped>
+.eliminar-dialog-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.7rem 0.2rem 0.2rem 0.2rem;
+}
+.icono-advertencia {
+  margin-bottom: 0.5rem;
+}
+.mensaje-advertencia {
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+</style>

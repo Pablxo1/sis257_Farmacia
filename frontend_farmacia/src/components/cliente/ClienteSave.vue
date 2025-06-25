@@ -25,6 +25,7 @@ const dialogVisible = computed({
 })
 
 const cliente = ref<Cliente>({ ...props.cliente })
+
 watch(
   () => props.cliente,
   (newVal) => {
@@ -32,7 +33,32 @@ watch(
   },
 )
 
+const clientes = ref<Cliente[]>([])
+
+async function cargarClientes() {
+  clientes.value = await http.get(ENDPOINT).then((res) => res.data)
+}
+
+watch(
+  () => props.mostrar,
+  (mostrar) => {
+    if (mostrar && !props.modoEdicion) {
+      cargarClientes()
+    }
+  },
+)
+
 async function handleSave() {
+  // CI duplicado
+  if (!props.modoEdicion) {
+    const existe = clientes.value.some(
+      (c) => c.ci.trim().toLowerCase() === cliente.value.ci.trim().toLowerCase(),
+    )
+    if (existe) {
+      alert('Ya existe un cliente con ese CI o cédula de identidad.')
+      return
+    }
+  }
   try {
     const body = {
       nombre: cliente.value.nombre,
@@ -54,31 +80,40 @@ async function handleSave() {
 </script>
 
 <template>
-  <div class="card flex justify-center">
+  <div class="cliente-save-container">
     <Dialog
       v-model:visible="dialogVisible"
-      :header="props.modoEdicion ? 'Editar Cliente' : 'Nuevo Cliente'"
-      style="width: 25rem"
+      :header="props.modoEdicion ? '✏️ Editar Cliente' : '🆕 Nuevo Cliente'"
+      :style="{ width: '32rem', maxWidth: '98vw' }"
+      modal
     >
       <form @submit.prevent="handleSave">
-        <div class="flex flex-column gap-3">
-          <label for="nombre" class="font-semibold">Nombre</label>
-          <InputText id="nombre" v-model="cliente.nombre" class="w-full" required />
-
-          <label for="apellido" class="font-semibold">Apellido</label>
-          <InputText id="apellido" v-model="cliente.apellido" class="w-full" required />
-
-          <label for="ci" class="font-semibold">Carnet de Identidad</label>
-          <InputText id="ci" v-model="cliente.ci" class="w-full" required />
+        <div class="form-section">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="nombre" class="form-label">Nombre</label>
+              <InputText id="nombre" v-model="cliente.nombre" class="w-full" required />
+            </div>
+            <div class="form-group">
+              <label for="apellido" class="form-label">Apellido</label>
+              <InputText id="apellido" v-model="cliente.apellido" class="w-full" required />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="ci" class="form-label">Cédula de Identidad</label>
+              <InputText id="ci" v-model="cliente.ci" class="w-full" required />
+            </div>
+          </div>
         </div>
-        <div class="flex justify-end gap-2 mt-4">
+        <div class="form-actions">
           <Button
             type="button"
             label="Cancelar"
             icon="pi pi-times"
             severity="secondary"
             @click="dialogVisible = false"
-          ></Button>
+          />
           <Button
             type="submit"
             :label="props.modoEdicion ? 'Actualizar' : 'Guardar'"
@@ -90,4 +125,82 @@ async function handleSave() {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.cliente-save-container {
+  padding: 1.5rem 0.5rem 0.5rem 0.5rem;
+  background: #f8fafc;
+  border-radius: 16px;
+  box-shadow: 0 2px 16px rgba(25, 118, 210, 0.08);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.form-section {
+  margin: 1.5rem 0 0.5rem 0;
+  background: #e3f2fd;
+  border-radius: 10px;
+  padding: 1rem 0.7rem;
+  box-shadow: 0 1px 4px rgba(25, 118, 210, 0.04);
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.form-group {
+  margin-bottom: 0.2rem;
+}
+
+.form-label {
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+  color: #1976d2;
+  letter-spacing: 0.5px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.p-button {
+  font-size: 1rem !important;
+  border-radius: 8px !important;
+  padding: 0.6rem 1.2rem !important;
+}
+
+.p-inputtext,
+.p-dropdown {
+  border-radius: 8px !important;
+  font-size: 1rem !important;
+  padding: 0.5rem 0.7rem !important;
+}
+
+.p-dialog .p-dialog-header {
+  border-radius: 16px 16px 0 0;
+}
+
+.p-dialog .p-dialog-content {
+  border-radius: 0 0 16px 16px;
+}
+
+@media (max-width: 700px) {
+  .cliente-save-container {
+    padding: 0.5rem;
+    max-width: 100vw;
+  }
+  .form-row {
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+  .form-group {
+    min-width: 100px;
+  }
+}
+</style>

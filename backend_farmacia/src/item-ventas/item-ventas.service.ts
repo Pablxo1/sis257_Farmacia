@@ -19,6 +19,7 @@ export class ItemVentasService {
     const existe = await this.itemVentasRepository.findOneBy({
       idVenta: createItemVentaDto.idVenta,
       idProducto: createItemVentaDto.idProducto,
+      idInventario: createItemVentaDto.idInventario,
     });
     if (existe)
       throw new ConflictException('El item de venta ya existe para esta venta y producto');
@@ -33,6 +34,12 @@ export class ItemVentasService {
     itemVenta.idProducto = createItemVentaDto.idProducto;
     itemVenta.cantidad = createItemVentaDto.cantidad;
     itemVenta.precioUnitario = createItemVentaDto.precioUnitario;
+    itemVenta.idInventario = createItemVentaDto.idInventario;
+
+    if (createItemVentaDto.idInventario !== undefined) {
+      itemVenta.idInventario = createItemVentaDto.idInventario;
+    }
+
     const itemGuardado = await this.itemVentasRepository.save(itemVenta);
 
     await this.ventasService.actualizarTotalVenta(createItemVentaDto.idVenta);

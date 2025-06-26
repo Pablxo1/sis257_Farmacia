@@ -1,14 +1,28 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useAuthStore } from '@/stores/index'
+import { useRoute, useRouter } from 'vue-router'
 
 const usuario = ref('')
 const clave = ref('')
 const error = ref(false)
 
+const route = useRoute()
+const router = useRouter()
+
 function onSubmit() {
   const authStore = useAuthStore()
-  authStore.login(usuario.value, clave.value).catch(() => (error.value = true))
+  authStore
+    .login(usuario.value, clave.value)
+    .then(() => {
+      const returnUrl = '/productos'
+      router.push(returnUrl as string)
+    })
+    .catch(() => (error.value = true))
+}
+
+function volverHome() {
+  window.location.href = '/'
 }
 </script>
 
@@ -24,18 +38,37 @@ function onSubmit() {
         <label class="login-label" for="usuario">Usuario</label>
         <div class="login-input-wrapper">
           <span class="material-symbols-outlined login-input-icon">person</span>
-          <input v-model="usuario" id="usuario" type="text" class="login-input" placeholder="Usuario" autofocus />
+          <input
+            v-model="usuario"
+            id="usuario"
+            type="text"
+            class="login-input"
+            placeholder="Usuario"
+            autofocus
+          />
         </div>
       </div>
       <div class="login-group">
         <label class="login-label" for="clave">Contraseña</label>
         <div class="login-input-wrapper">
           <span class="material-symbols-outlined login-input-icon">lock</span>
-          <input v-model="clave" id="clave" type="password" class="login-input" placeholder="Contraseña" />
+          <input
+            v-model="clave"
+            id="clave"
+            type="password"
+            class="login-input"
+            placeholder="Contraseña"
+          />
         </div>
       </div>
       <p v-if="error" class="login-error">Usuario y/o contraseña incorrectos</p>
       <button type="submit" class="login-btn">Ingresar</button>
+      <div class="volver-home-link">
+        <a href="#" @click.prevent="volverHome">
+          <span class="material-symbols-outlined" style="vertical-align: middle">arrow_back</span>
+          Volver al inicio
+        </a>
+      </div>
     </form>
   </div>
 </template>
@@ -54,7 +87,7 @@ function onSubmit() {
 .login-card {
   background: #fff;
   border-radius: 18px;
-  box-shadow: 0 6px 32px 0 rgba(25, 118, 210, 0.10);
+  box-shadow: 0 6px 32px 0 rgba(25, 118, 210, 0.1);
   border: 1px solid #bbdefb;
   padding: 2.5rem 2rem 2rem 2rem;
   width: 100%;
@@ -159,5 +192,20 @@ function onSubmit() {
   text-align: center;
   font-size: 0.98rem;
   letter-spacing: 0.5px;
+}
+.volver-home-link {
+  text-align: center;
+  margin-top: 1.2rem;
+}
+.volver-home-link a {
+  color: #1976d2;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 1.05rem;
+  transition: color 0.2s;
+}
+.volver-home-link a:hover {
+  color: #43a047;
+  text-decoration: underline;
 }
 </style>

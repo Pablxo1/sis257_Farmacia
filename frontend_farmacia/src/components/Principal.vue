@@ -31,7 +31,7 @@ const toggleSidebar = () => {
 
 function logout() {
   authStore.logout()
-  router.push('/login')
+  window.location.href = '/'
 }
 </script>
 
